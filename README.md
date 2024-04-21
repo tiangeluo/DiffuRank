@@ -1,8 +1,13 @@
 # [View Selection for 3D Captioning via Diffusion Ranking](http://arxiv.org/abs/2404.07984)
 
+<a href="https://cap3d-um.github.io/"><img src="https://img.shields.io/static/v1?label=Project&message=Website&color=red" height=20.5></a>
 <a href="https://arxiv.org/abs/2404.07984"><img src="https://img.shields.io/badge/arXiv-2404.07984-b31b1b.svg" height=20.5></a>
+<a href="https://arxiv.org/abs/2306.07279"><img src="https://img.shields.io/badge/arXiv-2306.07279-b31b1b.svg" height=20.5></a>
+
 
 [Tiange Luo](https://tiangeluo.github.io/), [Justin Johnson†](https://web.eecs.umich.edu/~justincj) [Honglak Lee†](https://web.eecs.umich.edu/~honglak/) (†Equal Advising)
+
+Data download available at [Hugging Face](https://huggingface.co/datasets/tiange/Cap3D), including `1,002,422` 3D-caption pairs covering the whole [Objaverse](https://arxiv.org/abs/2212.08051) and subset of [Objaverse-XL](https://arxiv.org/abs/2307.05663) datasets. We also the associated objects' point clouds and rendered images (with camera, depth, and MatAlpha information).
 
 ## Rendering
 Please first download our Blender via the below commands. You can use your own Blender, while may need to pip install several packages.
