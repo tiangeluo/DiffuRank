@@ -16,7 +16,7 @@ import random
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--uid_path', type = str, default='../example_material/example_object_path.pkl')
-parser.add_argument('--mother_dir', type = str, default='../example_material')
+parser.add_argument('--mother_dir', type = str, default='..')
 parser.add_argument('--cache_dir', type = str, default='./shapE_cache')
 parser.add_argument('--save_name', type = str, default='extracted_shapE_latent')
 args = parser.parse_args()
@@ -43,8 +43,8 @@ with torch.no_grad():
                 cache_dir=args.cache_dir,
                 verbose=True, # This will show Blender output during renders
             )
-            batch['points']=batch['points'].cpu()
-            pickle.dump(batch, open(os.path.join(target_dir, '%s.pkl'%(os.path.basename(file_path))), 'wb'))
+            latent = xm.encoder.encode_to_bottleneck(batch)
+            torch.save(latent.cpu(), os.path.join(target_dir, '%s.pt'%(os.path.basename(file_path))))
 
         except:
             print('Error:', file_path)
