@@ -24,3 +24,21 @@ Please run the below command to render objects into `.png` images saved at `{par
 
 ./blender-3.4.1-linux-x64/blender -b -P render_script_type1.py -- --object_path_pkl './example_material/example_object_path.pkl' --parent_dir './example_material'
 ```
+
+## Citation
+If you find our code or data useful, please consider citing:
+```
+@article{luo2024view,
+      title={View Selection for 3D Captioning via Diffusion Ranking},
+      author={Luo, Tiange and Johnson, Justin and Lee, Honglak},
+      journal={arXiv preprint arXiv:2404.07984},
+      year={2024}
+}
+
+@article{luo2023scalable,
+      title={Scalable 3D Captioning with Pretrained Models},
+      author={Luo, Tiange and Rockwell, Chris and Lee, Honglak and Johnson, Justin},
+      journal={arXiv preprint arXiv:2306.07279},
+      year={2023}
+}
+```
