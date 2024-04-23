@@ -1,0 +1,8 @@
+shap-e/shap_e_model_cache/
+shap-e/model_ckpts/
+shap-e/shapE_inference/
+
+*.swp
+**/__pycache__/
+
+
