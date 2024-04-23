@@ -9,7 +9,7 @@ mv shapE_finetuned_with_825kdata.pth model_ckpts
 ```
 
 ## Extract latents
-We provide the code for extracting shapE latencode, if you need to extract them on your own 3D objects. Objaverse shapE latent codes are provided on our [dataset page](https://huggingface.co/datasets/tiange/Cap3D/tree/main/misc/ShapELatentCode_zips). 
+We provide the code necessary to extract the shape latent code, should you need to apply it to your own 3D objects. Objaverse shapE latent codes are provided on our [dataset page](https://huggingface.co/datasets/tiange/Cap3D/tree/main/misc/ShapELatentCode_zips). 
 
 Please run `python extract_latent.py` and the results will be saved at `./extracted_shapE_latent`. You can look at the example files to see how to apply it to your own data.
 
