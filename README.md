@@ -20,9 +20,14 @@ Please run the below command to render objects into `.png` images saved at `{par
 ```
 # --object_path_pkl: point to a pickle file which store the object path
 # --parent_dir: the directory store the rendered images and their associated camera matrix
-# Rendered images will be stored at partent_dir/Cap3D_imgs/
 
+# Rendered images will be stored at partent_dir/Cap3D_imgs/
+# 8 views will be rendered for each object; camera placed horizontally around the object's default orientation
 ./blender-3.4.1-linux-x64/blender -b -P render_script_type1.py -- --object_path_pkl './example_material/example_object_path.pkl' --parent_dir './example_material'
+
+# Rendered images will be stored at partent_dir/Cap3D_imgs_20views/
+# 20 views will be rendered for each object; camera placed randomly
+./blender-3.4.1-linux-x64/blender -b -P render_script_type2.py -- --object_path_pkl './example_material/example_object_path.pkl' --parent_dir './example_material'
 ```
 
 ## Citation

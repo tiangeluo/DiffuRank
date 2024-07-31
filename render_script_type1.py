@@ -1,3 +1,10 @@
+# ==============================================================================
+# Copyright (c) 2023 Tiange Luo, tiange.cs@gmail.com
+# Last modified: July 31, 2024
+#
+# This code is licensed under the MIT License.
+# ==============================================================================
+
 # ./blender-3.4.1-linux-x64/blender -b -P render_script_type1.py -- --object_path_pkl './example_material/example_object_path.pkl' --parent_dir './example_material'
 import bpy
 import sys
@@ -14,7 +21,6 @@ import random
 
 ### solve the division problem
 from decimal import Decimal, getcontext
-from IPython import embed
 
 getcontext().prec = 28  # Set the precision for the decimal calculations.
 
@@ -463,6 +469,7 @@ file_size = []
 dis = []
 for uid in uid_paths:
     if not os.path.exists(uid):
+        print('object not exist, check the file path')
         continue
     bpy.ops.object.select_by_type(type='MESH')
     bpy.ops.object.delete()
