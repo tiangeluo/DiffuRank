@@ -8,7 +8,6 @@
 [Tiange Luo](https://tiangeluo.github.io/), [Justin Johnson†](https://web.eecs.umich.edu/~justincj) [Honglak Lee†](https://web.eecs.umich.edu/~honglak/) (†Equal Advising)
 
 Data download available at [Hugging Face](https://huggingface.co/datasets/tiange/Cap3D), including `1,002,422` 3D-caption pairs covering the whole [Objaverse](https://arxiv.org/abs/2212.08051) and subset of [Objaverse-XL](https://arxiv.org/abs/2307.05663) datasets. We also the associated objects' point clouds and rendered images (with camera, depth, and MatAlpha information).
-
 ## Overall Logistics
 To identify key views of a 3D object for downstream tasks like captioning in DiffuRank, we follow a multi-step process:
 
@@ -55,7 +54,12 @@ Please go to [shap-e](https://github.com/tiangeluo/DiffuRank/tree/main/shap-e) f
 ### DiffuRank process
 Please go to [shap-e](https://github.com/tiangeluo/DiffuRank/tree/main/shap-e) folder to perform DiffuRank.
 
+### Final Captioning with Key Views
+Please use the below command. It will store the final captions as `caption.csv`.
 
+```
+python captioning_gpt.py --api_key 'YOUR_OPENAI_API_KEY'
+```
 
 
 ## Citation
