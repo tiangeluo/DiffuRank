@@ -808,7 +808,7 @@ class GaussianDiffusion:
             "extra": out["extra"],
         }
 
-    def sds_batch(
+    def diffurank_scores(
         self, model, x_start, t, model_kwargs=None, noise=None, times=None
     ) -> Dict[str, th.Tensor]:
         """
