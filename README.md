@@ -10,15 +10,6 @@
 Data download available at [Hugging Face](https://huggingface.co/datasets/tiange/Cap3D), including `1,002,422` 3D-caption pairs covering the whole [Objaverse](https://arxiv.org/abs/2212.08051) and subset of [Objaverse-XL](https://arxiv.org/abs/2307.05663) datasets. We also the associated objects' point clouds and rendered images (with camera, depth, and MatAlpha information).
 
 ## Overall Logistics
-For any given 3D object, we rank its rendered views to select key views for downstream tasks, such as captioning in DiffuRank. 
-
-Our overall procedure consists of multiple steps:
-- We render the object from multiple views to obtain a total of 28 2D images (with two different rendering settings).
-- We captioning all the 28 images to obtain 5x28 captions.
-- We extract shapE latent codes as 3D descriptor.
-- We run DiffuRank over the obtained captions and shapE latent codes to compute the alignment degree between the captions and the 3D descriptor.
-- The images whose captions are most aligned with the 3D descriptor are selected as key views.
-
 To identify key views of a 3D object for downstream tasks like captioning in DiffuRank, we follow a multi-step process:
 
 - We render the object from 28 distinct views using two different rendering settings, producing 2D images for each view.
