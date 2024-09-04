@@ -729,7 +729,7 @@ def main():
             print('object not exist, check the file path')
             continue
 
-        cur_output_path = os.path.join(args.parent_dir, 'Cap3D_imgs_20views/%s'%(uid.split('/')[-1].split('.')[0]))
+        cur_output_path = os.path.join(args.parent_dir, 'Cap3D_imgs/%s'%(uid.split('/')[-1].split('.')[0]))
         try:
             save_rendering_dataset(
                 input_path=uid,

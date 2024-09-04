@@ -9,14 +9,32 @@
 
 Data download available at [Hugging Face](https://huggingface.co/datasets/tiange/Cap3D), including `1,002,422` 3D-caption pairs covering the whole [Objaverse](https://arxiv.org/abs/2212.08051) and subset of [Objaverse-XL](https://arxiv.org/abs/2307.05663) datasets. We also the associated objects' point clouds and rendered images (with camera, depth, and MatAlpha information).
 
-## Rendering
+## Overall Logistics
+For any given 3D object, we rank its rendered views to select key views for downstream tasks, such as captioning in DiffuRank. 
+
+Our overall procedure consists of multiple steps:
+- We render the object from multiple views to obtain a total of 28 2D images (with two different rendering settings).
+- We captioning all the 28 images to obtain 5x28 captions.
+- We extract shapE latent codes as 3D descriptor.
+- We run DiffuRank over the obtained captions and shapE latent codes to compute the alignment degree between the captions and the 3D descriptor.
+- The images whose captions are most aligned with the 3D descriptor are selected as key views.
+
+To identify key views of a 3D object for downstream tasks like captioning in DiffuRank, we follow a multi-step process:
+
+- We render the object from 28 distinct views using two different rendering settings, producing 2D images for each view.
+- We generate captions for all 28 images, resulting in 5 captions per image.
+- We extract ShapE latent codes, which serve as the 3D descriptor for the object.
+- Using DiffuRank, we calculate the alignment between the generated captions and the ShapE latent codes to assess their compatibility.
+- Finally, the images whose captions show the highest alignment with the 3D descriptor are selected as the key views.
+
+### Rendering
 Please first download our Blender via the below commands. You can use your own Blender, while may need to pip install several packages.
 ```
 wget https://huggingface.co/datasets/tiange/Cap3D/resolve/main/misc/blender.zip
 unzip blender.zip
 ```
 
-Please run the below command to render objects into `.png` images saved at `{parent_dir}/Cap3D_imgs/{uid}/{0~7}.png`
+Please run the below command to render objects into `.png` images saved at `{parent_dir}/Cap3D_imgs/{uid}/{00000~00028}.png`
 ```
 # --object_path_pkl: point to a pickle file which store the object path
 # --parent_dir: the directory store the rendered images and their associated camera matrix
@@ -25,10 +43,25 @@ Please run the below command to render objects into `.png` images saved at `{par
 # 8 views will be rendered for each object; camera placed horizontally around the object's default orientation
 ./blender-3.4.1-linux-x64/blender -b -P render_script_type1.py -- --object_path_pkl './example_material/example_object_path.pkl' --parent_dir './example_material'
 
-# Rendered images will be stored at partent_dir/Cap3D_imgs_20views/
+# Rendered images will be stored at partent_dir/Cap3D_imgs/
 # 20 views will be rendered for each object; camera placed randomly
 ./blender-3.4.1-linux-x64/blender -b -P render_script_type2.py -- --object_path_pkl './example_material/example_object_path.pkl' --parent_dir './example_material'
 ```
+
+### Captioning
+We currently use BLIP2 to generate captions for rendered images. There are a lot of other new captioning model that can be used for this task.
+
+```bash
+pip install salesforce-lavis
+
+# this program will scan all the folders inside partent_dir/Cap3D_imgs/
+python caption_blip2.py --parent_dir ./example_material
+```
+
+### Extract ShapE Latent Codes
+
+
+
 
 ## Citation
 If you find our code or data useful, please consider citing:

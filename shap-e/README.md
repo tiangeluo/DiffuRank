@@ -1,25 +1,10 @@
 ## Overall
-- Install with `pip install -e .`. Please make sure you download the shap-E code from this repo as there are modifications compared to the original repo. Additionally, you need to install [Pytorch3D](https://github.com/facebookresearch/pytorch3d) to render images via `stf` mode. You can skip installing Pytorch3D to generate meshes, while it is needed to calculate final numbers.
-
-- Download finetuned checkpoint from https:https://huggingface.co/datasets/tiange/Cap3D/tree/main/misc/our_finetuned_models, and move it to `model_ckpts`.
-```
-wget https://huggingface.co/datasets/tiange/Cap3D/resolve/main/misc/our_finetuned_models/shapE_finetuned_with_825kdata.pth
-mkdir model_ckpts
-mv shapE_finetuned_with_825kdata.pth model_ckpts
-```
+- Install with `pip install -e .`. Please make sure you download the shap-E code from this repo as there are modifications compared to the original repo. 
 
 ## Extract latents
 We provide the code necessary to extract the shape latent code, should you need to apply it to your own 3D objects. Objaverse shapE latent codes are provided on our [dataset page](https://huggingface.co/datasets/tiange/Cap3D/tree/main/misc/ShapELatentCode_zips). 
 
 Please run `python extract_latent.py` and the results will be saved at `./extracted_shapE_latent`. You can look at the example files to see how to apply it to your own data.
-
-## Rendering (cleaning code)
-```
-wget https://huggingface.co/datasets/tiange/Cap3D/resolve/main/blender.zip
-unzip blender.zip
-
-./blender-3.4.1-linux-x64/blender -b -P render_script_shapE.py -- --save_dir './rendering_output' --parent_dir './shapE_inference/Cap3D_test1_meshes'
-```
 
 
 ## Citation

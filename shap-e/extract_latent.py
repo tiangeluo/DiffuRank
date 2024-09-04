@@ -1,6 +1,6 @@
 # ==============================================================================
 # Copyright (c) 2024 Tiange Luo, tiange.cs@gmail.com
-# Last modified: April 23, 2024
+# Last modified: September 04, 2024
 #
 # This code is licensed under the MIT License.
 # ==============================================================================
@@ -18,7 +18,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--uid_path', type = str, default='../example_material/example_object_path.pkl')
 parser.add_argument('--mother_dir', type = str, default='..')
 parser.add_argument('--cache_dir', type = str, default='./shapE_cache')
-parser.add_argument('--save_name', type = str, default='extracted_shapE_latent')
+parser.add_argument('--save_name', type = str, default='../example_material/extracted_shapE_latent')
 args = parser.parse_args()
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -27,7 +27,7 @@ from shap_e.models.download import load_model
 xm = load_model('transmitter', device=device)
 
 uid_list = pickle.load(open(args.uid_path, 'rb'))
-target_dir = './%s'%args.save_name
+target_dir = args.save_name
 os.makedirs(target_dir, exist_ok=True)
 
 with torch.no_grad():  

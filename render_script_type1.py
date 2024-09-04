@@ -1,6 +1,6 @@
 # ==============================================================================
 # Copyright (c) 2023 Tiange Luo, tiange.cs@gmail.com
-# Last modified: July 31, 2024
+# Last modified: September 04, 2024
 #
 # This code is licensed under the MIT License.
 # ==============================================================================
@@ -18,6 +18,7 @@ import time
 import pickle
 from PIL import Image
 import random
+import json
 
 ### solve the division problem
 from decimal import Decimal, getcontext
@@ -71,6 +72,7 @@ def clear_socket_input(tree, socket):
         if link.to_socket == socket:
             tree.links.remove(link)
 
+FORMAT_VERSION = 6
 MAX_DEPTH = 5.0
 
 UNIFORM_LIGHT_DIRECTION = None
@@ -405,6 +407,37 @@ def create_vertex_color_shaders():
 
         obj.data.materials.append(mat)
 
+def scene_fov():
+    x_fov = bpy.context.scene.camera.data.angle_x
+    y_fov = bpy.context.scene.camera.data.angle_y
+    width = bpy.context.scene.render.resolution_x
+    height = bpy.context.scene.render.resolution_y
+    if bpy.context.scene.camera.data.angle == x_fov:
+        y_fov = 2 * math.atan(math.tan(x_fov / 2) * height / width)
+    else:
+        x_fov = 2 * math.atan(math.tan(y_fov / 2) * width / height)
+    return x_fov, y_fov
+
+def write_camera_metadata(path):
+    x_fov, y_fov = scene_fov()
+    bbox_min, bbox_max = scene_bbox()
+    matrix = bpy.context.scene.camera.matrix_world
+    with open(path, "w") as f:
+        json.dump(
+            dict(
+                format_version=FORMAT_VERSION,
+                max_depth=MAX_DEPTH,
+                bbox=[list(bbox_min), list(bbox_max)],
+                origin=list(matrix.col[3])[:3],
+                x_fov=x_fov,
+                y_fov=y_fov,
+                x=list(matrix.col[0])[:3],
+                y=list(-matrix.col[1])[:3],
+                z=list(-matrix.col[2])[:3],
+            ),
+            f,
+        )
+
 def render_scene(output_path, fast_mode: bool, extract_material: bool, basic_lighting: bool):
     use_workbench=True
     bpy.context.scene.render.engine == "CYCLES"
@@ -515,23 +548,25 @@ for uid in uid_paths:
            camera_dist_max=2.0,
         )
         camera = bpy.context.scene.camera
-        RT = get_3x4_RT_matrix_from_blender(camera)
-        RT_path = os.path.join(cur_path,f"{i}_cam.npy")
-        np.save(RT_path, RT)
+        transform_matrix = bpy.context.scene.camera.matrix_world
+        rotation = transform_matrix.to_euler()[2]
+        transform_matrix_list = []
+        for row in transform_matrix:
+            transform_matrix_list.append(list(row))
         try:
             render_scene(
-               os.path.join(cur_path, f"{i}.png"),
+               os.path.join(cur_path, f"{i+20:05}.png"),
                fast_mode=True,
                extract_material=True,
                basic_lighting=True,
             )
         except:
             render_scene(
-               os.path.join(cur_path, f"{i}.png"),
+               os.path.join(cur_path, f"{i+20:05}.png"),
                fast_mode=True,
                extract_material=False,
                basic_lighting=False,
             )
-            print('render_scene failed')
-            continue
+            print('render_scene with material failed')
+        write_camera_metadata(os.path.join(cur_path, f"{i+20:05}.json"))
     continue
