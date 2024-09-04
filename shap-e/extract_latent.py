@@ -44,7 +44,7 @@ with torch.no_grad():
                 verbose=True, # This will show Blender output during renders
             )
             latent = xm.encoder.encode_to_bottleneck(batch)
-            torch.save(latent.cpu(), os.path.join(target_dir, '%s.pt'%(os.path.basename(file_path))))
+            torch.save(latent.cpu(), os.path.join(target_dir, '%s.pt'%(os.path.basename(file_path).split('.')[0])))
 
         except:
             print('Error:', file_path)

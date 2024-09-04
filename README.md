@@ -50,6 +50,10 @@ python caption_blip2.py --parent_dir ./example_material
 ```
 
 ### Extract ShapE Latent Codes
+Please go to [shap-e](https://github.com/tiangeluo/DiffuRank/tree/main/shap-e) folder to extract ShapE latent codes.
+
+### DiffuRank process
+Please go to [shap-e](https://github.com/tiangeluo/DiffuRank/tree/main/shap-e) folder to perform DiffuRank.
 
 
 

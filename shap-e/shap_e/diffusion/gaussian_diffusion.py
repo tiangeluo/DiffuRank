@@ -808,6 +808,189 @@ class GaussianDiffusion:
             "extra": out["extra"],
         }
 
+    def sds_batch(
+        self, model, x_start, t, model_kwargs=None, noise=None, times=None
+    ) -> Dict[str, th.Tensor]:
+        """
+        Compute training losses for a single timestep.
+
+        :param model: the model to evaluate loss on.
+        :param x_start: the [N x C x ...] tensor of inputs.
+        :param t: a batch of timestep indices.
+        :param model_kwargs: if not None, a dict of extra keyword arguments to
+            pass to the model. This can be used for conditioning.
+        :param noise: if specified, the specific Gaussian noise to try to remove.
+        :return: a dict with the key "loss" containing a tensor of shape [N].
+                 Some mean or variance settings may also have other keys.
+        """
+        x_start = self.scale_channels(x_start)
+        if model_kwargs is None:
+            model_kwargs = {}
+        # keep the noise same for all the captions
+        if noise is None:
+            noise = th.randn_like(x_start[0].unsqueeze(0).repeat([int(len(x_start)/len(model_kwargs['texts'])*times),1]))
+            noise=noise.unsqueeze(1).repeat([1,int(len(model_kwargs['texts'])/times),1]).transpose(0,1).reshape(-1,noise.shape[1])
+        if len(model_kwargs['texts']) != len(t):
+            model_kwargs['texts'] *= int(len(x_start)/len(model_kwargs['texts']))
+        x_t = self.q_sample(x_start, t, noise=noise)
+
+        terms = {}
+
+        if self.loss_type == "kl" or self.loss_type == "rescaled_kl":
+            vb_terms = self._vb_terms_bpd(
+                model=model,
+                x_start=x_start,
+                x_t=x_t,
+                t=t,
+                clip_denoised=False,
+                model_kwargs=model_kwargs,
+            )
+            terms["loss"] = vb_terms["output"]
+            if self.loss_type == "rescaled_kl":
+                terms["loss"] *= self.num_timesteps
+            extra = vb_terms["extra"]
+        elif self.loss_type == "mse" or self.loss_type == "rescaled_mse":
+            model_output = model(x_t, t, **model_kwargs)
+            if isinstance(model_output, tuple):
+                model_output, extra = model_output
+            else:
+                extra = {}
+
+            if self.model_var_type in [
+                "learned",
+                "learned_range",
+            ]:
+                B, C = x_t.shape[:2]
+                assert model_output.shape == (
+                    B,
+                    C * 2,
+                    *x_t.shape[2:],
+                ), f"{model_output.shape} != {(B, C * 2, *x_t.shape[2:])}"
+                model_output, model_var_values = th.split(model_output, C, dim=1)
+                frozen_out = th.cat([model_output.detach(), model_var_values], dim=1)
+                terms["vb"] = self._vb_terms_bpd(
+                    model=lambda *args, r=frozen_out: r,
+                    x_start=x_start,
+                    x_t=x_t,
+                    t=t,
+                    clip_denoised=False,
+                )["output"]
+                if self.loss_type == "rescaled_mse":
+                    terms["vb"] *= self.num_timesteps / 1000.0
+
+            target = {
+                "x_prev": self.q_posterior_mean_variance(x_start=x_start, x_t=x_t, t=t)[0],
+                "x_start": x_start,
+                "epsilon": noise,
+            }[self.model_mean_type]
+            assert model_output.shape == target.shape == x_start.shape
+            terms["mse"] = mean_flat((target - model_output) ** 2)
+            if "vb" in terms:
+                terms["loss"] = terms["mse"] + terms["vb"]
+            else:
+                terms["loss"] = terms["mse"]
+        else:
+            raise NotImplementedError(self.loss_type)
+
+        if "losses" in extra:
+            terms.update({k: loss for k, (loss, _scale) in extra["losses"].items()})
+            for loss, scale in extra["losses"].values():
+                terms["loss"] = terms["loss"] + loss * scale
+
+        return terms
+    def sds(
+        self, model, x_start, t, model_kwargs=None, noise=None
+    ) -> Dict[str, th.Tensor]:
+        """
+        Compute training losses for a single timestep.
+
+        :param model: the model to evaluate loss on.
+        :param x_start: the [N x C x ...] tensor of inputs.
+        :param t: a batch of timestep indices.
+        :param model_kwargs: if not None, a dict of extra keyword arguments to
+            pass to the model. This can be used for conditioning.
+        :param noise: if specified, the specific Gaussian noise to try to remove.
+        :return: a dict with the key "loss" containing a tensor of shape [N].
+                 Some mean or variance settings may also have other keys.
+        """
+        x_start = self.scale_channels(x_start)
+        if model_kwargs is None:
+            model_kwargs = {}
+        if noise is None:
+            noise = th.randn_like(x_start[0].unsqueeze(0).repeat([int(len(x_start)/len(model_kwargs['texts'])),1]))
+            noise=noise.unsqueeze(1).repeat([1,len(model_kwargs['texts']),1]).reshape(-1,noise.shape[1])
+        if len(model_kwargs['texts']) != len(t):
+            model_kwargs['texts'] *= int(len(x_start)/len(model_kwargs['texts']))
+        x_t = self.q_sample(x_start, t, noise=noise)
+
+        terms = {}
+
+        if self.loss_type == "kl" or self.loss_type == "rescaled_kl":
+            vb_terms = self._vb_terms_bpd(
+                model=model,
+                x_start=x_start,
+                x_t=x_t,
+                t=t,
+                clip_denoised=False,
+                model_kwargs=model_kwargs,
+            )
+            terms["loss"] = vb_terms["output"]
+            if self.loss_type == "rescaled_kl":
+                terms["loss"] *= self.num_timesteps
+            extra = vb_terms["extra"]
+        elif self.loss_type == "mse" or self.loss_type == "rescaled_mse":
+            model_output = model(x_t, t, **model_kwargs)
+            if isinstance(model_output, tuple):
+                model_output, extra = model_output
+            else:
+                extra = {}
+
+            if self.model_var_type in [
+                "learned",
+                "learned_range",
+            ]:
+                B, C = x_t.shape[:2]
+                assert model_output.shape == (
+                    B,
+                    C * 2,
+                    *x_t.shape[2:],
+                ), f"{model_output.shape} != {(B, C * 2, *x_t.shape[2:])}"
+                model_output, model_var_values = th.split(model_output, C, dim=1)
+                # Learn the variance using the variational bound, but don't let
+                # it affect our mean prediction.
+                frozen_out = th.cat([model_output.detach(), model_var_values], dim=1)
+                terms["vb"] = self._vb_terms_bpd(
+                    model=lambda *args, r=frozen_out: r,
+                    x_start=x_start,
+                    x_t=x_t,
+                    t=t,
+                    clip_denoised=False,
+                )["output"]
+                if self.loss_type == "rescaled_mse":
+                    # Divide by 1000 for equivalence with initial implementation.
+                    # Without a factor of 1/1000, the VB term hurts the MSE term.
+                    terms["vb"] *= self.num_timesteps / 1000.0
+
+            target = {
+                "x_prev": self.q_posterior_mean_variance(x_start=x_start, x_t=x_t, t=t)[0],
+                "x_start": x_start,
+                "epsilon": noise,
+            }[self.model_mean_type]
+            assert model_output.shape == target.shape == x_start.shape
+            terms["mse"] = mean_flat((target - model_output) ** 2)
+            if "vb" in terms:
+                terms["loss"] = terms["mse"] + terms["vb"]
+            else:
+                terms["loss"] = terms["mse"]
+        else:
+            raise NotImplementedError(self.loss_type)
+
+        if "losses" in extra:
+            terms.update({k: loss for k, (loss, _scale) in extra["losses"].items()})
+            for loss, scale in extra["losses"].values():
+                terms["loss"] = terms["loss"] + loss * scale
+
+        return terms
     def training_losses(
         self, model, x_start, t, model_kwargs=None, noise=None
     ) -> Dict[str, th.Tensor]:
@@ -831,7 +1014,6 @@ class GaussianDiffusion:
         x_t = self.q_sample(x_start, t, noise=noise)
 
         terms = {}
-
 
         if self.loss_type == "kl" or self.loss_type == "rescaled_kl":
             vb_terms = self._vb_terms_bpd(
