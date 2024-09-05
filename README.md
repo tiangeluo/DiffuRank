@@ -11,11 +11,11 @@ Data download available at [Hugging Face](https://huggingface.co/datasets/tiange
 ## Overall Logistics
 To identify key views of a 3D object for downstream tasks like captioning in DiffuRank, we follow a multi-step process:
 
-- We render the object from 28 distinct views using two different rendering settings, producing 2D images for each view.
-- We generate captions for all 28 images, resulting in 5 captions per image.
-- We extract ShapE latent codes, which serve as the 3D descriptor for the object.
-- Using DiffuRank, we calculate the alignment between the generated captions and the ShapE latent codes to assess their compatibility.
-- Finally, the images whose captions show the highest alignment with the 3D descriptor are selected as the key views.
+- **Rendering:** We render the object from 28 distinct views using two different rendering settings, producing 2D images for each view.
+- **Captioning:** We generate captions for all 28 images, resulting in 5 captions per image.
+- **Extracting:** We extract ShapE latent codes, which serve as the 3D descriptor for the object.
+- **DiffuRank:** Using DiffuRank, we calculate the alignment between the generated captions and the ShapE latent codes to assess their compatibility.
+- **GPT Captioning:** Finally, the images whose captions show the highest alignment with the 3D descriptor are selected as the key views.
 
 ### Rendering
 Please first download our Blender via the below commands. You can use your own Blender, while may need to pip install several packages.
