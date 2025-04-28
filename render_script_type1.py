@@ -440,7 +440,7 @@ def write_camera_metadata(path):
 
 def render_scene(output_path, fast_mode: bool, extract_material: bool, basic_lighting: bool):
     use_workbench=True
-    bpy.context.scene.render.engine == "CYCLES"
+    bpy.context.scene.render.engine = "CYCLES"
     bpy.context.scene.cycles.samples = 16
     bpy.context.scene.cycles.use_denoising = True
     bpy.context.scene.cycles.denoiser = 'OPTIX'
@@ -483,7 +483,7 @@ def render_scene(output_path, fast_mode: bool, extract_material: bool, basic_lig
         # Re-render RGBA using workbench with texture mode, since this seems
         # to show the most reasonable colors when lighting is broken.
         bpy.context.scene.use_nodes = False
-        bpy.context.scene.render.engine == "CYCLES"
+        bpy.context.scene.render.engine = "CYCLES"
         bpy.context.scene.cycles.samples = 16
         bpy.context.scene.cycles.use_denoising = True
         bpy.context.scene.cycles.denoiser = 'OPTIX'

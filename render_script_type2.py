@@ -469,7 +469,7 @@ def setup_nodes(output_path, capturing_material_alpha: bool = False, basic_light
 def render_scene(output_path, fast_mode: bool, extract_material: bool, basic_lighting: bool):
     # use_workbench=True
     use_workbench = False
-    bpy.context.scene.render.engine == "CYCLES"
+    bpy.context.scene.render.engine = "CYCLES"
     bpy.context.scene.cycles.samples = 16
     bpy.context.scene.cycles.use_denoising = True
     bpy.context.scene.cycles.denoiser = 'OPTIX' 
@@ -526,7 +526,7 @@ def render_scene(output_path, fast_mode: bool, extract_material: bool, basic_lig
 
     if use_workbench:
         bpy.context.scene.use_nodes = False
-        bpy.context.scene.render.engine == "CYCLES"
+        bpy.context.scene.render.engine = "CYCLES"
         bpy.context.scene.cycles.samples = 16
         bpy.context.scene.cycles.use_denoising = True
         bpy.context.scene.cycles.denoiser = 'OPTIX'
