@@ -490,8 +490,8 @@ def render_scene(output_path, fast_mode: bool, extract_material: bool, basic_lig
         bpy.context.scene.render.image_settings.color_mode = "RGBA"
         bpy.context.scene.render.image_settings.color_depth = "16"
         ### change background to grey
-        bpy.context.scene.world.node_tree.nodes["Background"].inputs[0].default_value = (0.81, 0.81, 0.81, 0.81)
-        bpy.context.scene.render.film_transparent = False
+        bpy.context.scene.world.node_tree.nodes["Background"].inputs[0].default_value = (0, 0, 0, 0)
+        bpy.context.scene.render.film_transparent = True
         os.remove(output_path)
         bpy.ops.render.render(write_still=True)
 

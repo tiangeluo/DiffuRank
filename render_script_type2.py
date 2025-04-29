@@ -502,6 +502,8 @@ def render_scene(output_path, fast_mode: bool, extract_material: bool, basic_lig
     bpy.context.scene.render.image_settings.color_mode = "BW"
     bpy.context.scene.render.image_settings.color_depth = "16"
     bpy.context.scene.render.filepath = output_path
+    bpy.context.scene.world.node_tree.nodes["Background"].inputs[0].default_value = (0.81, 0.81, 0.81, 0.81)
+    bpy.context.scene.render.film_transparent = False
     if extract_material:
         for do_alpha in [False, True]:
             undo_fn = setup_material_extraction_shaders(capturing_material_alpha=do_alpha)
@@ -696,7 +698,7 @@ def main():
     parser.add_argument('--object_path_pkl', type = str, default = './example_material/example_object_path.pkl')
     parser.add_argument('--parent_dir', type = str, default = './example_material')
     parser.add_argument("--num_images", type=int, default=20)
-    parser.add_argument("--backend", type=str, default="BLENDER_EEVEE")
+    parser.add_argument("--backend", type=str, default="CYCLES")
     parser.add_argument("--light_mode", type=str, default="uniform")
     parser.add_argument("--camera_pose", type=str, default="random")
     parser.add_argument("--camera_dist_min", type=float, default=2.0)
@@ -735,8 +737,7 @@ def main():
                 input_path=uid,
                 output_path=cur_output_path,
                 num_images=args.num_images,
-                # backend=args.backend,
-                backend="CYCLES",
+                backend=args.backend,
                 light_mode=args.light_mode,
                 camera_pose=args.camera_pose,
                 camera_dist_min=args.camera_dist_min,
@@ -750,8 +751,7 @@ def main():
                 input_path=uid,
                 output_path=cur_output_path,
                 num_images=args.num_images,
-                # backend=args.backend,
-                backend="CYCLES",
+                backend=args.backend,
                 light_mode='random',
                 camera_pose=args.camera_pose,
                 camera_dist_min=args.camera_dist_min,
