@@ -65,17 +65,21 @@ python captioning_gpt.py --api_key 'YOUR_OPENAI_API_KEY'
 ## Citation
 If you find our code or data useful, please consider citing:
 ```
-@article{luo2024view,
-      title={View Selection for 3D Captioning via Diffusion Ranking},
-      author={Luo, Tiange and Johnson, Justin and Lee, Honglak},
-      journal={arXiv preprint arXiv:2404.07984},
-      year={2024}
+@article{luo2023scalable,
+  title={Scalable 3d captioning with pretrained models},
+  author={Luo, Tiange and Rockwell, Chris and Lee, Honglak and Johnson, Justin},
+  journal={Advances in Neural Information Processing Systems},
+  volume={36},
+  pages={75307--75337},
+  year={2023}
 }
 
-@article{luo2023scalable,
-      title={Scalable 3D Captioning with Pretrained Models},
-      author={Luo, Tiange and Rockwell, Chris and Lee, Honglak and Johnson, Justin},
-      journal={arXiv preprint arXiv:2306.07279},
-      year={2023}
+@inproceedings{luo2024view,
+  title={View selection for 3d captioning via diffusion ranking},
+  author={Luo, Tiange and Johnson, Justin and Lee, Honglak},
+  booktitle={European Conference on Computer Vision},
+  pages={180--197},
+  year={2024},
+  organization={Springer}
 }
 ```
